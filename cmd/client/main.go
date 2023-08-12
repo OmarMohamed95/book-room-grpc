@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"room-booking/client"
 	"room-booking/pb"
 	"time"
 
@@ -13,7 +14,10 @@ import (
 
 func main() {
 	addr := flag.String("address", "", "the server address")
+	operation := flag.String("operation", "", "the server address")
 	flag.Parse()
+
+	client.Validate(*operation)
 
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -24,16 +28,9 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.CreateRoom(ctx, &pb.CreateRoomRequest{Room: &pb.Room{
-		Title:       "test room",
-		Address:     "test address",
-		Price:       200000,
-		Area:        200,
-		IsAvailable: true,
-	}})
-	if err != nil {
-		log.Fatalf("err while processing request: %v", err)
-	}
 
-	log.Printf("Room created with id #%d", r.GetId())
+	client.Perform(*operation, client.OperationParams{
+		RoomServiceClient: c,
+		Context:           ctx,
+	})
 }
