@@ -10,6 +10,7 @@ message Room {
   string address = 3;
   uint64 price = 4;
   uint32 area = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
+  bool is_available = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
 }
