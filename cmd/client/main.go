@@ -24,7 +24,13 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.CreateRoom(ctx, &pb.CreateRoomRequest{Room: &pb.Room{}})
+	r, err := c.CreateRoom(ctx, &pb.CreateRoomRequest{Room: &pb.Room{
+		Title:       "test room",
+		Address:     "test address",
+		Price:       200000,
+		Area:        200,
+		IsAvailable: true,
+	}})
 	if err != nil {
 		log.Fatalf("err while processing request: %v", err)
 	}
