@@ -10,8 +10,8 @@ type Room struct {
 	gorm.Model
 	Title       string `gorm:""`
 	Address     string `gorm:""`
-	Price       int    `gorm:""`
-	Area        int    `gorm:""`
+	Price       uint64 `gorm:""`
+	Area        uint32 `gorm:""`
 	IsAvailable bool   `gorm:""`
 }
 
