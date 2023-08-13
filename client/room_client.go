@@ -51,7 +51,19 @@ func createRoom(op OperationParams) {
 }
 
 func findRoom(op OperationParams) {
+	roomId := 1
+	r, err := op.RoomServiceClient.FindRoom(op.Context, &pb.FindRoomRequest{Id: uint64(roomId)})
 
+	if err != nil {
+		log.Fatalf("err while processing request: %v", err)
+	}
+
+	log.Printf("Room with id #%d found successfully", roomId)
+	log.Printf("Title: %s", r.Room.Title)
+	log.Printf("Address: %s", r.Room.Address)
+	log.Printf("Price: %d", r.Room.Price)
+	log.Printf("Area: %d", r.Room.Area)
+	log.Printf("IsAvailable: %t", r.Room.IsAvailable)
 }
 
 func updateRoom(op OperationParams) {

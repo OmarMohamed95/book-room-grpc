@@ -4,14 +4,13 @@ option go_package = "./pb";
 
 import "room_message.proto";
 
-message CreateRoomRequest {
-    Room room = 1;
-}
+message CreateRoomRequest { Room room = 1; }
+message CreateRoomResponse { uint64 id = 1; }
 
-message CreateRoomResponse {
-    uint64 id = 1;
-}
+message FindRoomRequest { uint64 id = 1; }
+message FindRoomResponse { Room room = 1; }
 
 service RoomService {
     rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {};
+    rpc FindRoom(FindRoomRequest) returns (FindRoomResponse) {};
 }
