@@ -22,7 +22,6 @@ func getValidOperationsMap() map[string]interface{} {
 		"find":   findRoom,
 		"update": updateRoom,
 		"delete": deleteRoom,
-		"book":   bookRoom,
 		"upload": uploadRoomImages,
 	}
 }
@@ -100,10 +99,6 @@ func deleteRoom(op OperationParams) {
 	}
 
 	fmt.Printf("Room with id #%d has been deleted successfully", roomId)
-}
-
-func bookRoom(op OperationParams) {
-
 }
 
 func uploadRoomImages(op OperationParams) {

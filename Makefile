@@ -21,9 +21,6 @@ client_update:
 client_delete:
 	go run cmd/client/main.go -address 0.0.0.0:8080 -operation delete
 
-client_book:
-	go run cmd/client/main.go -address 0.0.0.0:8080 -operation book
-
 client_upload:
 	go run cmd/client/main.go -address 0.0.0.0:8080 -operation upload
 
