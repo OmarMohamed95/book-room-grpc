@@ -3,6 +3,8 @@ syntax = "proto3";
 option go_package = "./pb";
 
 import "room_message.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
 
 message CreateRoomRequest { Room room = 1; }
 message CreateRoomResponse { uint64 id = 1; }
@@ -10,7 +12,17 @@ message CreateRoomResponse { uint64 id = 1; }
 message FindRoomRequest { uint64 id = 1; }
 message FindRoomResponse { Room room = 1; }
 
+message UpdateRoomRequest {
+    Room room = 2;
+    google.protobuf.FieldMask field_mask = 3;
+}
+message UpdateRoomResponse { Room room = 1; }
+
+message DeleteRoomRequest { uint64 id = 1; }
+
 service RoomService {
     rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {};
     rpc FindRoom(FindRoomRequest) returns (FindRoomResponse) {};
+    rpc UpdateRoom(UpdateRoomRequest) returns (UpdateRoomResponse) {};
+    rpc DeleteRoom(DeleteRoomRequest) returns (google.protobuf.Empty) {};
 }
