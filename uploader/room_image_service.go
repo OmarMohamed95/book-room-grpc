@@ -4,12 +4,19 @@ import (
 	"bytes"
 	"log"
 	"room-booking/model"
+	"room-booking/pb"
+	"room-booking/validator"
 
 	roomRepository "room-booking/repository/room"
 )
 
-func HandleUpload(image bytes.Buffer, imageName string, imageType string, roomId uint) (*model.Image, error) {
-	path, err := newS3Uploader().Upload(image, imageType)
+func HandleUpload(image bytes.Buffer, imageInfo *pb.ImageInfo, roomId uint, uploader ImageUploader) (*model.Image, error) {
+	err := validator.ValidateType(imageInfo.GetImageType())
+	if err != nil {
+		return nil, err
+	}
+
+	path, err := uploader.upload(image)
 	if err != nil {
 		log.Printf("error while uploading iamge to S3: %s", err)
 
@@ -22,7 +29,7 @@ func HandleUpload(image bytes.Buffer, imageName string, imageType string, roomId
 	}
 
 	updatedImage, err := roomRepository.NewRoom(*room).AddImage(&model.Image{
-		Name:  imageName,
+		Name:  imageInfo.GetImageName(),
 		Path:  path,
 		Rooms: []model.Room{*room},
 	})

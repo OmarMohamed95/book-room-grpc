@@ -113,15 +113,8 @@ func (s *RoomServer) UploadImage(stream pb.RoomService_UploadImageServer) error 
 	}
 
 	roomId := req.GetInfo().GetRoomId()
-	imageName := req.GetInfo().GetImageName()
-	imageType := req.GetInfo().GetImageType()
 
-	err = validator.ValidateType(imageType)
-	if err != nil {
-		return logger.LogError(status.Error(codes.InvalidArgument, err.Error()))
-	}
-
-	image := bytes.Buffer{}
+	imageBuf := bytes.Buffer{}
 	for {
 		err := logger.ContextError(stream.Context())
 		if err != nil {
@@ -139,23 +132,23 @@ func (s *RoomServer) UploadImage(stream pb.RoomService_UploadImageServer) error 
 
 		chunk := req.GetChunkData()
 
-		err = validator.IsSizeExceededMaxSize(chunk, image)
+		err = validator.IsSizeExceededMaxSize(chunk, imageBuf)
 		if err != nil {
 			return logger.LogError(status.Error(codes.InvalidArgument, err.Error()))
 		}
 
-		_, err = image.Write(chunk)
+		_, err = imageBuf.Write(chunk)
 		if err != nil {
 			return logger.LogError(status.Errorf(codes.Internal, "cannot write chunk data: %v", err))
 		}
 	}
 
-	uploadedImage, err := uploader.HandleUpload(image, imageName, imageType, uint(roomId))
+	uploadedImage, err := uploader.HandleUpload(imageBuf, req.GetInfo(), uint(roomId), uploader.NewS3Uploader())
 	if err != nil {
-		return logger.LogError(status.Errorf(codes.Internal, "cannot write chunk data: %v", err))
+		return logger.LogError(status.Errorf(codes.Internal, "error while uploading image: %v", err))
 	}
 
-	imageSize := image.Len()
+	imageSize := imageBuf.Len()
 	res := &pb.UploadImageResponse{
 		Id:   uint64(uploadedImage.ID),
 		Size: uint32(imageSize),

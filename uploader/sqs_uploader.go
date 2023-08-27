@@ -5,17 +5,18 @@ import (
 	"fmt"
 )
 
-type imageUploader interface {
-	Upload() (string, error)
+type ImageUploader interface {
+	upload(bytes.Buffer) (string, error)
 }
 
 type S3Uploader struct{}
 
-func newS3Uploader() S3Uploader {
+// return new instance of S3Uploader
+func NewS3Uploader() S3Uploader {
 	return S3Uploader{}
 }
 
-func (u S3Uploader) Upload(image bytes.Buffer, imageType string) (string, error) {
+func (u S3Uploader) upload(image bytes.Buffer) (string, error) {
 	// var bucket, key string
 	// var timeout time.Duration
 
