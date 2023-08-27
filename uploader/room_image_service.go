@@ -9,9 +9,9 @@ import (
 )
 
 func HandleUpload(image bytes.Buffer, imageName string, imageType string, roomId uint) (*model.Image, error) {
-	path, err := newSQSUploader().upload(image, imageType)
+	path, err := newS3Uploader().Upload(image, imageType)
 	if err != nil {
-		log.Printf("error while uploading iamge to SQS: %s", err)
+		log.Printf("error while uploading iamge to S3: %s", err)
 
 		return nil, err
 	}

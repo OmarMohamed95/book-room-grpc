@@ -9,13 +9,13 @@ type imageUploader interface {
 	Upload() (string, error)
 }
 
-type SQSUploader struct{}
+type S3Uploader struct{}
 
-func newSQSUploader() SQSUploader {
-	return SQSUploader{}
+func newS3Uploader() S3Uploader {
+	return S3Uploader{}
 }
 
-func (u SQSUploader) upload(image bytes.Buffer, imageType string) (string, error) {
+func (u S3Uploader) Upload(image bytes.Buffer, imageType string) (string, error) {
 	// var bucket, key string
 	// var timeout time.Duration
 
