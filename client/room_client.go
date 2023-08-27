@@ -1,13 +1,22 @@
 package client
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"io"
 	"log"
+	"os"
+	"path/filepath"
 	"reflect"
 	"room-booking/pb"
+	"time"
 
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
+)
+
+const (
+	imagePath = "images/room.jpg"
 )
 
 type OperationParams struct {
@@ -102,5 +111,64 @@ func deleteRoom(op OperationParams) {
 }
 
 func uploadRoomImages(op OperationParams) {
+	roomId := 1
+	file, err := os.Open(imagePath)
+	if err != nil {
+		log.Fatal("cannot open image file: ", err)
+	}
+	defer file.Close()
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stream, err := op.RoomServiceClient.UploadImage(ctx)
+	if err != nil {
+		log.Fatal("cannot upload image: ", err)
+	}
+
+	req := &pb.UploadImageRequest{
+		Data: &pb.UploadImageRequest_Info{
+			Info: &pb.ImageInfo{
+				RoomId:    uint64(roomId),
+				ImageName: filepath.Base(imagePath),
+				ImageType: filepath.Ext(imagePath),
+			},
+		},
+	}
+
+	err = stream.Send(req)
+	if err != nil {
+		log.Fatal("cannot send image info to server: ", err, stream.RecvMsg(nil))
+	}
+
+	reader := bufio.NewReader(file)
+	buffer := make([]byte, 1024)
+
+	for {
+		n, err := reader.Read(buffer)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal("cannot read chunk to buffer: ", err)
+		}
+
+		req := &pb.UploadImageRequest{
+			Data: &pb.UploadImageRequest_ChunkData{
+				ChunkData: buffer[:n],
+			},
+		}
+
+		err = stream.Send(req)
+		if err != nil {
+			log.Fatal("cannot send chunk to server: ", err, stream.RecvMsg(nil))
+		}
+	}
+
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Fatal("cannot receive response: ", err)
+	}
+
+	log.Printf("Image uploaded with id: %d, size: %d", res.GetId(), res.GetSize())
 }

@@ -20,9 +20,28 @@ message UpdateRoomResponse { Room room = 1; }
 
 message DeleteRoomRequest { uint64 id = 1; }
 
+message UploadImageRequest {
+    oneof data {
+      ImageInfo info = 1;
+      bytes chunk_data = 2;
+    };
+  }
+  
+  message ImageInfo {
+    uint64 room_id = 1;
+    string image_name = 2;
+    string image_type = 3;
+  }
+  
+  message UploadImageResponse {
+    uint64 id = 1;
+    uint32 size = 2;
+  }
+
 service RoomService {
     rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {};
     rpc FindRoom(FindRoomRequest) returns (FindRoomResponse) {};
     rpc UpdateRoom(UpdateRoomRequest) returns (UpdateRoomResponse) {};
     rpc DeleteRoom(DeleteRoomRequest) returns (google.protobuf.Empty) {};
+    rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {};
 }

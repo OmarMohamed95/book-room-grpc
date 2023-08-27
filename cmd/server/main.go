@@ -6,7 +6,7 @@ import (
 	"log"
 	"net"
 	"room-booking/pb"
-	"room-booking/service"
+	"room-booking/server"
 
 	"google.golang.org/grpc"
 )
@@ -23,7 +23,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterRoomServiceServer(s, service.NewRoomServer())
+	pb.RegisterRoomServiceServer(s, server.NewRoomServer())
 	log.Printf("server listening at %v", lis.Addr())
 
 	if err := s.Serve(lis); err != nil {
