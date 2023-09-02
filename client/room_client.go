@@ -75,6 +75,9 @@ func findRoom(op OperationParams) {
 	log.Printf("Price: %d", r.Room.Price)
 	log.Printf("Area: %d", r.Room.Area)
 	log.Printf("IsAvailable: %t", r.Room.IsAvailable)
+	for _, image := range r.Room.Images {
+		log.Printf("Image: %s", image)
+	}
 }
 
 func updateRoom(op OperationParams) {

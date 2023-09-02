@@ -24,5 +24,6 @@ func MapToResponse(rm model.Room) *pb.Room {
 		Price:       rm.Price,
 		Area:        rm.Area,
 		IsAvailable: rm.IsAvailable,
+		Images:      MapImagesToResponse(rm.Images),
 	}
 }

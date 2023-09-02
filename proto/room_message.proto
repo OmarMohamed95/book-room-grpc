@@ -3,6 +3,7 @@ syntax = "proto3";
 option go_package = "./pb";
 
 import "google/protobuf/timestamp.proto";
+import "image_message.proto";
 
 message Room {
   uint64 id = 1;
@@ -13,4 +14,5 @@ message Room {
   bool is_available = 6;
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
+  repeated Image images = 9;
 }

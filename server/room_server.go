@@ -9,6 +9,7 @@ import (
 	"room-booking/logger"
 	"room-booking/mapper"
 	"room-booking/pb"
+	imageRepository "room-booking/repository/image"
 	roomRepository "room-booking/repository/room"
 	"room-booking/uploader"
 	"room-booking/validator"
@@ -51,6 +52,12 @@ func (s *RoomServer) FindRoom(ctx context.Context, in *pb.FindRoomRequest) (*pb.
 	if err != nil {
 		return nil, err
 	}
+
+	images, err := imageRepository.FindImagesByRoomId(uint(in.Id))
+	if err != nil {
+		return nil, err
+	}
+	room.Images = *images
 
 	fmt.Printf("Room with id #%d found successfully", room.ID)
 
