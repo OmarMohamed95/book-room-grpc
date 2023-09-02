@@ -16,7 +16,7 @@ func HandleUpload(image bytes.Buffer, imageInfo *pb.ImageInfo, roomId uint, uplo
 		return nil, err
 	}
 
-	path, err := uploader.upload(image)
+	path, err := uploader.upload(image, imageInfo)
 	if err != nil {
 		log.Printf("error while uploading iamge to S3: %s", err)
 
